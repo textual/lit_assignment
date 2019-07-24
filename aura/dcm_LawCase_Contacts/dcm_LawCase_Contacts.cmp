@@ -1,0 +1,54 @@
+<aura:component implements="flexipage:availableForAllPageTypes,force:hasRecordId,force:appHostable" access="global"
+    controller="dcm_LawCaseContact_Controller">
+
+    <aura:attribute name="recordId" type="Id" />
+    <aura:attribute name="items" type="Object" access="PRIVATE" />
+    <aura:attribute name="expandedRows" type="List" access="PRIVATE" />
+    <aura:attribute name="gridColumns" type="List" access="PRIVATE" />
+    <aura:attribute name="showAddFormModal" type="Boolean" default="false" access="PRIVATE" />
+    <aura:attribute name="showEditFormModal" type="Boolean" default="false" access="PRIVATE" />
+    <aura:attribute name="fields" type="String[]" default="['Contact__c','Contact_Role__c']" />
+
+    <aura:handler name="init" value="{!this}" action="{!c.init}" />
+
+    <lightning:card title="Law Case Contacts">
+        <aura:set attribute="actions">
+            <lightning:button label="Add Contact" onclick="{! c.handleNewContact }" />
+        </aura:set>
+        <p class="slds-p-horizontal_small">
+            <lightning:treeGrid 
+                columns="{! v.gridColumns }"
+                data="{! v.items }" 
+                expandedRows="{!v.expandedRows}"
+                hideCheckboxColumn="true"
+                keyField="name"
+                onrowaction="{!c.handleRowAction}"
+            />
+        </p>
+    </lightning:card>
+
+    <aura:if isTrue="{!v.showAddFormModal || v.showEditFormModal }">
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true"
+            aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open slds-modal_large">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <lightning:buttonIcon iconName="utility:close" onclick="{! c.closeModal }" alternativeText="close"
+                        variant="bare-inverse" class="slds-modal__close" />
+                </header>
+                <div class="slds-modal__content slds-p-around_medium">
+                    form goes here
+                    <lightning:recordForm 
+                        aura:id="newCaseContactForm"
+                        fields="{!v.fields}" 
+                        mode="edit" 
+                        objectApiName="Case_Contact__c" 
+                        onsubmit="{!c.handleNewContactSubmit}"
+                        onsuccess="{!c.handleNewContactSuccess}"
+                    />
+                </div>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </aura:if>
+
+</aura:component>
